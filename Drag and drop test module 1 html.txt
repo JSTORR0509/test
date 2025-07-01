@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mental Well-being Matching</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #fdfdfd;
+    }
+    h2 {
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .list, .targets {
+      flex: 1;
+      min-width: 280px;
+    }
+    .item {
+      margin: 8px 0;
+      padding: 10px;
+      background: #dae9f7;
+      border-radius: 5px;
+      cursor: grab;
+      border: 1px solid #a4c2f4;
+    }
+    .dropzone {
+      padding: 15px;
+      margin-bottom: 10px;
+      min-height: 50px;
+      border: 2px dashed #999;
+      border-radius: 5px;
+      background: #f0f0f0;
+    }
+    .dropzone.over {
+      background: #d9f9d9;
+    }
+    #feedback {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎯 Match each definition to the correct component of mental well-being</h2>
+  <div class="container">
+    <div class="list" id="definitions">
+      <div class="item" draggable="true" data-match="Autonomy">Feeling in control of your decisions and actions</div>
+      <div class="item" draggable="true" data-match="Resilience">Bouncing back from life’s difficulties</div>
+      <div class="item" draggable="true" data-match="Self-esteem">Holding a positive view of yourself</div>
+    </div>
+    <div class="targets">
+      <div class="dropzone" data-match="Autonomy">🧩 Autonomy</div>
+      <div class="dropzone" data-match="Resilience">🛡️ Resilience</div>
+      <div class="dropzone" data-match="Self-esteem">🌟 Self-esteem</div>
+    </div>
+  </div>
+  <p id="feedback"></p>
+
+  <script>
+    document.querySelectorAll('.item').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', item.dataset.match);
+        e.dataTransfer.setData('text/id', item.id);
+      });
+    });
+
+    document.querySelectorAll('.dropzone').forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('over');
+      });
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('over');
+      });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('over');
+        const match = e.dataTransfer.getData('text/plain');
+        const item = [...document.querySelectorAll('.item')].find(i => i.dataset.match === match);
+        if (zone.dataset.match === match && item) {
+          zone.innerHTML = '';
+          zone.appendChild(item);
+          item.style.background = '#b6eeb7';
+          document.getElementById('feedback').textContent = '✅ Great job!';
+        } else {
+          document.getElementById('feedback').textContent = '❌ Not quite right. Try again!';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
